@@ -1,0 +1,26 @@
+*,
+*:before,
+*:after {
+	box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+	height: 100%;
+}
+
+textarea {
+	height: 100%;
+	width: 100%;
+}
+
+button {
+	min-height: 32px;
+}
+
+pre {
+	margin: 0;
+	word-break: break-all;
+	white-space: pre-wrap;
+}
