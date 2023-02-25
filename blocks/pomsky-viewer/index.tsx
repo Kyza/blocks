@@ -8,11 +8,11 @@ import {
 } from "@primer/react";
 import "./index.css";
 
-import initPomsky, { compile } from "pomsky-wasm";
-import { useEffect, useState } from "react";
+import initPomsky, { PomskyResult, compile } from "pomsky-wasm";
+import { memo, useEffect, useState } from "react";
 import pomskyWASM from "./pomsky-wasm.json";
 
-export default function (props: FileBlockProps) {
+export default memo(function (props: FileBlockProps) {
 	const { context, content, metadata, onUpdateMetadata, BlockComponent } =
 		props;
 	const language = Boolean(context.path)
@@ -41,6 +41,12 @@ export default function (props: FileBlockProps) {
 	const [flavor, setFlavor] = useState<
 		"JavaScript" | "Java" | ".NET" | "PCRE" | "Python" | "Ruby" | "Rust"
 	>("JavaScript");
+
+	const [pomskyResult, setPomskyResult] = useState<PomskyResult | null>();
+
+	useEffect(() => {
+		if (didInit) setPomskyResult(compile(content, flavor.toLowerCase()));
+	}, [didInit, content, flavor]);
 
 	return (
 		<Box
@@ -143,16 +149,32 @@ export default function (props: FileBlockProps) {
 							repo: "blocks-examples",
 							id: "code-block",
 						}}
-						context={context}
 					/>
 				</Show>
 				<Show when={tab === "regex"}>
 					<Show when={didInit}>
 						<pre>
 							<code>
-								{didInit
-									? compile(content, flavor.toLowerCase()).output
-									: null}
+								<Show
+									when={
+										pomskyResult &&
+										pomskyResult?.diagnostics.length > 0
+									}
+								>
+									{JSON.stringify(
+										pomskyResult?.diagnostics,
+										null,
+										"\t"
+									)}
+								</Show>
+								<Show
+									when={
+										pomskyResult &&
+										pomskyResult?.diagnostics.length === 0
+									}
+								>
+									{pomskyResult?.output}
+								</Show>
 							</code>
 						</pre>
 					</Show>
@@ -172,11 +194,11 @@ export default function (props: FileBlockProps) {
 			</Show>
 		</Box>
 	);
-}
+});
 
 function Show(props: {
-	when: boolean;
-	children?: JSX.Element | JSX.Element[];
+	when: boolean | any;
+	children?: null | string | JSX.Element | JSX.Element[];
 }) {
 	return <>{props.when ? props.children : null}</>;
 }
