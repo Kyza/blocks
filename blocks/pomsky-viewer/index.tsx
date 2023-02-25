@@ -3,8 +3,8 @@ import { Box, Button, ButtonGroup } from "@primer/react";
 import "./index.css";
 
 import initPomsky, { compile } from "pomsky-wasm";
-import pomskyWASM from "pomsky-wasm/pomsky_wasm_bg.wasm?url";
 import { useEffect, useState } from "react";
+import pomskyWASM from "./pomsky-wasm.json";
 
 export default function (props: FileBlockProps) {
 	const { context, content, metadata, onUpdateMetadata, BlockComponent } =
@@ -14,11 +14,14 @@ export default function (props: FileBlockProps) {
 		: "N/A";
 
 	const [didInit, setDidInit] = useState(false);
-	if (!didInit) {
-		initPomsky(pomskyWASM).then(() => {
-			setDidInit(true);
-		});
-	}
+	(async () => {
+		if (!didInit) {
+			initPomsky(Uint8Array.from(pomskyWASM)).then(() => {
+				console.log("[Pomsky Viewer] Initialized WASM.");
+				setDidInit(true);
+			});
+		}
+	})();
 
 	const [isPomsky, setIsPomsky] = useState(false);
 	useEffect(() => {
