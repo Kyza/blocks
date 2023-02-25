@@ -5,12 +5,25 @@ import {
 	Box,
 	Button,
 	ButtonGroup,
+	Flash,
 } from "@primer/react";
 import "./index.css";
 
 import initPomsky, { PomskyResult, compile } from "pomsky-wasm";
 import { memo, useEffect, useState } from "react";
 import pomskyWASM from "./pomsky-wasm.json";
+
+import Editor from "./Editor";
+import Show from "./Show";
+
+function findRowColContext(str: string, start: number) {
+	const previousLines = str.slice(0, start).split("\n");
+	const row = previousLines.length;
+	const column = (previousLines[previousLines.length - 1] ?? "").length + 1;
+	const context = str.split("\n")[previousLines.length];
+
+	return { row, column, context };
+}
 
 export default memo(function (props: FileBlockProps) {
 	const {
@@ -20,6 +33,8 @@ export default memo(function (props: FileBlockProps) {
 		onUpdateMetadata,
 		onUpdateContent,
 		BlockComponent,
+		isEditable,
+		originalContent,
 	} = props;
 	const language = Boolean(context.path)
 		? getLanguageFromFilename(context.path)
@@ -49,21 +64,21 @@ export default memo(function (props: FileBlockProps) {
 	>("JavaScript");
 
 	const [pomskyResult, setPomskyResult] = useState<PomskyResult | null>();
-
+	const [didError, setDidError] = useState(false);
 	useEffect(() => {
-		if (didInit) setPomskyResult(compile(content, flavor.toLowerCase()));
+		if (didInit) {
+			const result = compile(content, flavor.toLowerCase());
+			console.debug(result);
+			setPomskyResult(result);
+			setDidError(result?.output == null);
+		}
 	}, [didInit, content, flavor]);
 
 	return (
-		<Box
-			position="relative"
-			display="flex"
-			flexDirection="column"
-			width="100%"
-			height="100%"
-		>
+		<Box className="pomsky-viewer">
 			<Show when={isPomsky}>
 				<Box
+					className="header"
 					borderColor="border.default"
 					borderWidth={1}
 					borderStyle="solid"
@@ -73,10 +88,8 @@ export default memo(function (props: FileBlockProps) {
 					borderRight="hidden"
 					p={2}
 					bg="canvas.subtle"
-					display="flex"
-					minHeight={48}
 				>
-					<ButtonGroup sx={{ display: "flex", alignItems: "center" }}>
+					<ButtonGroup>
 						<Button
 							onClick={() => setTab("pomsky")}
 							disabled={tab === "pomsky"}
@@ -147,72 +160,56 @@ export default memo(function (props: FileBlockProps) {
 							</ActionList>
 						</ActionMenu.Overlay>
 					</ActionMenu>
+					<Show when={didError}>Error!</Show>
 				</Box>
 				<Show when={tab === "pomsky"}>
-					<textarea
-						className="content"
-						spellCheck="false"
-						value={content}
-						onChange={(event) => {
-							onUpdateContent(event.target.value);
+					<Editor
+						text={originalContent}
+						onChange={(text) => {
+							onUpdateContent(text);
 						}}
 					/>
-					{/* <BlockComponent
-						block={{
-							owner: "githubnext",
-							repo: "blocks-examples",
-							id: "code-block",
-						}}
-					/> */}
 				</Show>
 				<Show when={tab === "regex"}>
 					<Show when={didInit}>
 						<pre className="content">
 							<code>
-								<Show
-									when={
-										pomskyResult &&
-										pomskyResult?.diagnostics.length > 0
-									}
-								>
-									{JSON.stringify(
-										pomskyResult?.diagnostics,
-										null,
-										"\t"
-									)}
+								<Show when={didError}>
+									<Box p={3}>
+										<Flash variant="danger">
+											{JSON.stringify(
+												pomskyResult?.diagnostics,
+												null,
+												"\t"
+											)}
+										</Flash>
+									</Box>
 								</Show>
-								<Show
-									when={
-										pomskyResult &&
-										pomskyResult?.diagnostics.length === 0
-									}
-								>
-									{pomskyResult?.output}
-								</Show>
+								<Show when={!didError}>{pomskyResult?.output}</Show>
 							</code>
 						</pre>
 					</Show>
 					<Show when={!didInit}>
-						<Box p={3}>Pomsky WASM is still initializing.</Box>
+						<Box p={3}>
+							<Flash variant="warning">
+								Pomsky WASM is still initializing.
+							</Flash>
+						</Box>
 					</Show>
 				</Show>
 			</Show>
 			<Show when={!isPomsky}>
 				<Box p={3}>
-					<code>{context.file}</code> is not Pomsky code.
-					<br />
-					This block only works on files ending with <code>
-						.pom
-					</code> or <code>.pomsky</code>.
+					<Flash variant="danger">
+						<code>{context.file}</code> is not Pomsky code.
+						<br />
+						This block only works on files ending with <code>
+							.pom
+						</code>{" "}
+						or <code>.pomsky</code>.
+					</Flash>
 				</Box>
 			</Show>
 		</Box>
 	);
 });
-
-function Show(props: {
-	when: boolean | any;
-	children?: null | string | JSX.Element | JSX.Element[];
-}) {
-	return <>{props.when ? props.children : null}</>;
-}

@@ -2,6 +2,7 @@
 *:before,
 *:after {
 	box-sizing: border-box;
+	overflow: hidden;
 }
 
 html,
@@ -10,24 +11,27 @@ body,
 	height: 100%;
 }
 
-.content {
-	height: 100%;
+.pomsky-viewer {
+	display: grid;
+	grid-template-rows: 48px calc(100% - 48px);
 	width: 100%;
-	padding: 2px;
+	height: 100%;
 }
 
-textarea {
-	resize: none;
-	border: none;
-	outline: none;
+.header {
+	display: flex;
+	flex-direction: row;
+	height: 48px;
 }
 
-button {
-	height: 32px;
+.content {
+	overflow: auto;
+	scrollbar-width: 0;
 }
 
 pre {
 	margin: 0;
+	padding: 2px;
 	word-break: break-all;
 	white-space: pre-wrap;
 }
