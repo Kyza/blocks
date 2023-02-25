@@ -2,7 +2,10 @@
 
 import { exec } from "child_process";
 import fs from "fs";
-import path from "path";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Loop over each directory inside of the dist directory and generate a tar ball for each of them
 const distDir = path.resolve(__dirname, "./dist");
