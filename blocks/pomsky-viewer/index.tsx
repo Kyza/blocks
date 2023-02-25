@@ -23,7 +23,7 @@ export default function (props: FileBlockProps) {
 	(async () => {
 		if (!didInit) {
 			initPomsky(Uint8Array.from(pomskyWASM)).then(() => {
-				console.log("[Pomsky Viewer] Initialized WASM.");
+				console.debug("[Pomsky Viewer] Initialized WASM.");
 				setDidInit(true);
 			});
 		}
