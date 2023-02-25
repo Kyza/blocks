@@ -24,9 +24,11 @@ body,
 	height: 48px;
 }
 
-.content {
+.cm-editor {
+	height: 100%;
+}
+.cm-scroller {
 	overflow: auto;
-	scrollbar-width: 0;
 }
 
 pre {
