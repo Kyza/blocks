@@ -7,11 +7,14 @@ import { EditorState } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
 
-let savedState: EditorState;
+let savedStates: Record<PropertyKey, EditorState> = {};
 
 export default (function (props: {
+	id: PropertyKey;
 	text: string;
-	onChange: (text: string) => void;
+	lineWrapping?: boolean;
+	readOnly?: boolean;
+	onChange?: (text: string) => void;
 }) {
 	let editor: EditorView;
 
@@ -22,7 +25,7 @@ export default (function (props: {
 				editor?.destroy();
 				editor ??= new EditorView({
 					doc: props.text,
-					state: savedState,
+					state: savedStates[props.id],
 					extensions: [
 						basicSetup,
 						keymap.of([
@@ -30,10 +33,14 @@ export default (function (props: {
 							indentWithTab,
 						]),
 						javascript({ typescript: true }),
+						EditorState.readOnly.of(props.readOnly ?? false),
+						[
+							props.lineWrapping ? EditorView.lineWrapping : null,
+						].filter((i) => i != null) as any,
 						EditorView.updateListener.of((update) => {
 							if (update.changes.empty) return;
-							savedState = update.state;
-							props.onChange(update.state.doc.toString());
+							savedStates[props.id] = update.state;
+							props.onChange?.(update.state.doc.toString());
 						}),
 					],
 					parent: element!,

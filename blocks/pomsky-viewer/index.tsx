@@ -164,6 +164,7 @@ export default memo(function (props: FileBlockProps) {
 				</Box>
 				<Show when={tab === "pomsky"}>
 					<Editor
+						id="pomsky"
 						text={originalContent}
 						onChange={(text) => {
 							onUpdateContent(text);
@@ -172,22 +173,25 @@ export default memo(function (props: FileBlockProps) {
 				</Show>
 				<Show when={tab === "regex"}>
 					<Show when={didInit}>
-						<pre className="content">
-							<code>
-								<Show when={didError}>
-									<Box p={3}>
-										<Flash variant="danger">
-											{JSON.stringify(
-												pomskyResult?.diagnostics,
-												null,
-												"\t"
-											)}
-										</Flash>
-									</Box>
-								</Show>
-								<Show when={!didError}>{pomskyResult?.output}</Show>
-							</code>
-						</pre>
+						<Show when={didError}>
+							<Box p={3}>
+								<Flash variant="danger">
+									{JSON.stringify(
+										pomskyResult?.diagnostics,
+										null,
+										"\t"
+									)}
+								</Flash>
+							</Box>
+						</Show>
+						<Show when={!didError}>
+							<Editor
+								id="regex"
+								lineWrapping={true}
+								readOnly={true}
+								text={pomskyResult?.output ?? ""}
+							/>
+						</Show>
 					</Show>
 					<Show when={!didInit}>
 						<Box p={3}>
