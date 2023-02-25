@@ -84,15 +84,6 @@ export default function (props: FileBlockProps) {
 						</ActionMenu.Button>
 
 						<ActionMenu.Overlay>
-							{/*
-								"JavaScript" or "js"
-								"Java"
-								"dotNET" or ".NET"
-								"PCRE"
-								"Python"
-								"Ruby"
-								"Rust"
-							*/}
 							<ActionList>
 								<ActionList.Group
 									title="Flavor..."
