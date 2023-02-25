@@ -13,8 +13,14 @@ import { memo, useEffect, useState } from "react";
 import pomskyWASM from "./pomsky-wasm.json";
 
 export default memo(function (props: FileBlockProps) {
-	const { context, content, metadata, onUpdateMetadata, BlockComponent } =
-		props;
+	const {
+		context,
+		content,
+		metadata,
+		onUpdateMetadata,
+		onUpdateContent,
+		BlockComponent,
+	} = props;
 	const language = Boolean(context.path)
 		? getLanguageFromFilename(context.path)
 		: "N/A";
@@ -143,13 +149,20 @@ export default memo(function (props: FileBlockProps) {
 					</ActionMenu>
 				</Box>
 				<Show when={tab === "pomsky"}>
-					<BlockComponent
+					<textarea
+						spellCheck="false"
+						value={content}
+						onChange={(event) => {
+							onUpdateContent(event.target.value);
+						}}
+					/>
+					{/* <BlockComponent
 						block={{
 							owner: "githubnext",
 							repo: "blocks-examples",
 							id: "code-block",
 						}}
-					/>
+					/> */}
 				</Show>
 				<Show when={tab === "regex"}>
 					<Show when={didInit}>

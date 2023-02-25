@@ -13,6 +13,9 @@ body,
 textarea {
 	height: 100%;
 	width: 100%;
+	resize: none;
+	border: none;
+	outline: none;
 }
 
 button {
