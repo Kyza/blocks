@@ -24,3 +24,7 @@ pre {
 	word-break: break-all;
 	white-space: pre-wrap;
 }
+
+.flavor-button {
+	margin-left: 8px;
+}

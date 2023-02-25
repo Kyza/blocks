@@ -1,5 +1,11 @@
 import { FileBlockProps, getLanguageFromFilename } from "@githubnext/blocks";
-import { Box, Button, ButtonGroup } from "@primer/react";
+import {
+	ActionList,
+	ActionMenu,
+	Box,
+	Button,
+	ButtonGroup,
+} from "@primer/react";
 import "./index.css";
 
 import initPomsky, { compile } from "pomsky-wasm";
@@ -31,6 +37,10 @@ export default function (props: FileBlockProps) {
 	}, [context]);
 
 	const [tab, setTab] = useState<"pomsky" | "regex">("pomsky");
+
+	const [flavor, setFlavor] = useState<
+		"JavaScript" | "Java" | ".NET" | "PCRE" | "Python" | "Ruby" | "Rust"
+	>("JavaScript");
 
 	return (
 		<Box
@@ -68,6 +78,72 @@ export default function (props: FileBlockProps) {
 							RegEx
 						</Button>
 					</ButtonGroup>
+					<ActionMenu>
+						<ActionMenu.Button className="flavor-button">
+							{flavor}
+						</ActionMenu.Button>
+
+						<ActionMenu.Overlay>
+							{/*
+								"JavaScript" or "js"
+								"Java"
+								"dotNET" or ".NET"
+								"PCRE"
+								"Python"
+								"Ruby"
+								"Rust"
+							*/}
+							<ActionList>
+								<ActionList.Group
+									title="Flavor..."
+									selectionVariant="single"
+								>
+									<ActionList.Item
+										selected={flavor === "JavaScript"}
+										onClick={() => setFlavor("JavaScript")}
+									>
+										JavaScript
+									</ActionList.Item>
+									<ActionList.Item
+										selected={flavor === "Java"}
+										onClick={() => setFlavor("Java")}
+									>
+										Java
+									</ActionList.Item>
+									<ActionList.Item
+										selected={flavor === ".NET"}
+										onClick={() => setFlavor(".NET")}
+									>
+										.NET
+									</ActionList.Item>
+									<ActionList.Item
+										selected={flavor === "PCRE"}
+										onClick={() => setFlavor("PCRE")}
+									>
+										PCRE
+									</ActionList.Item>
+									<ActionList.Item
+										selected={flavor === "Python"}
+										onClick={() => setFlavor("Python")}
+									>
+										Python
+									</ActionList.Item>
+									<ActionList.Item
+										selected={flavor === "Ruby"}
+										onClick={() => setFlavor("Ruby")}
+									>
+										Ruby
+									</ActionList.Item>
+									<ActionList.Item
+										selected={flavor === "Rust"}
+										onClick={() => setFlavor("Rust")}
+									>
+										Rust
+									</ActionList.Item>
+								</ActionList.Group>
+							</ActionList>
+						</ActionMenu.Overlay>
+					</ActionMenu>
 				</Box>
 				<Show when={tab === "pomsky"}>
 					<BlockComponent
@@ -83,7 +159,9 @@ export default function (props: FileBlockProps) {
 					<Show when={didInit}>
 						<pre>
 							<code>
-								{didInit ? compile(content, "js").output : null}
+								{didInit
+									? compile(content, flavor.toLowerCase()).output
+									: null}
 							</code>
 						</pre>
 					</Show>
