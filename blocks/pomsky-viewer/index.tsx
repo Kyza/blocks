@@ -160,7 +160,7 @@ export default memo(function (props: FileBlockProps) {
 							</ActionList>
 						</ActionMenu.Overlay>
 					</ActionMenu>
-					<Show when={didError}>Error!</Show>
+					{/* <Show when={didError}>Error!</Show> */}
 				</Box>
 				<Show when={tab === "pomsky"}>
 					<Editor
@@ -176,11 +176,15 @@ export default memo(function (props: FileBlockProps) {
 						<Show when={didError}>
 							<Box p={3}>
 								<Flash variant="danger">
-									{JSON.stringify(
-										pomskyResult?.diagnostics,
-										null,
-										"\t"
-									)}
+									<pre>
+										<code>
+											{JSON.stringify(
+												pomskyResult?.diagnostics,
+												null,
+												"\t"
+											)}
+										</code>
+									</pre>
 								</Flash>
 							</Box>
 						</Show>

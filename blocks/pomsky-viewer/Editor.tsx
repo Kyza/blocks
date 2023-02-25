@@ -6,10 +6,11 @@ import { javascript } from "@codemirror/lang-javascript";
 import { EditorState } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { basicSetup } from "codemirror";
+import { memo } from "react";
 
 let savedStates: Record<PropertyKey, EditorState> = {};
 
-export default (function (props: {
+export default memo(function (props: {
 	id: PropertyKey;
 	text: string;
 	lineWrapping?: boolean;
@@ -45,6 +46,9 @@ export default (function (props: {
 					],
 					parent: element!,
 				});
+
+				// Ensure focus.
+				editor.focus();
 			}}
 		></Box>
 	);

@@ -34,3 +34,7 @@ body,
 .flavor-button {
 	margin-left: 8px;
 }
+
+pre {
+	margin: 0;
+}
