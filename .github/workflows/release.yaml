@@ -23,7 +23,7 @@ jobs:
         run: yarn build
 
       - name: Create block tarballs
-        run: node ./release.ts
+        run: node --loader tsx ./release.ts
 
       - name: Release
         uses: softprops/action-gh-release@v1
