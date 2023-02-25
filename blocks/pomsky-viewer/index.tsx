@@ -150,6 +150,7 @@ export default memo(function (props: FileBlockProps) {
 				</Box>
 				<Show when={tab === "pomsky"}>
 					<textarea
+						className="content"
 						spellCheck="false"
 						value={content}
 						onChange={(event) => {
@@ -166,7 +167,7 @@ export default memo(function (props: FileBlockProps) {
 				</Show>
 				<Show when={tab === "regex"}>
 					<Show when={didInit}>
-						<pre>
+						<pre className="content">
 							<code>
 								<Show
 									when={

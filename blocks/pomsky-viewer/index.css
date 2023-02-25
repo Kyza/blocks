@@ -10,16 +10,20 @@ body,
 	height: 100%;
 }
 
-textarea {
+.content {
 	height: 100%;
 	width: 100%;
+	padding: 2px;
+}
+
+textarea {
 	resize: none;
 	border: none;
 	outline: none;
 }
 
 button {
-	min-height: 32px;
+	height: 32px;
 }
 
 pre {
